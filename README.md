@@ -1,6 +1,6 @@
 # RAG-based Support Agent
 
-A support agent that uses RAG (Retrieval Augmented Generation) to provide contextual responses based on historical support tickets.
+A RAG (Retrieval-Augmented Generation) based support agent that learns from resolved Zendesk tickets to provide accurate responses to new support queries.
 
 ## Features
 
@@ -8,56 +8,54 @@ A support agent that uses RAG (Retrieval Augmented Generation) to provide contex
 - Builds a knowledge base using RAG
 - Processes open tickets and suggests responses
 - Interactive mode for testing responses
-- Dynamic support user ID handling
+- Environment variable configuration for sensitive data
 
 ## Setup
 
 1. Clone the repository:
-```bash
-git clone https://github.com/L.fanampe/rag-based-support-agent.git
-cd rag-based-support-agent
-```
+   ```bash
+   git clone https://github.com/djpapzin/rag-based-support-agent.git
+   cd rag-based-support-agent
+   ```
 
 2. Create and activate a virtual environment:
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
 
 3. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
+   ```bash
+   pip install -r requirements.txt
+   ```
 
 4. Set up environment variables:
-```bash
-cp .env.example .env
-```
-Edit the `.env` file with your API credentials and configuration.
+   ```bash
+   cp .env.example .env
+   ```
+   Edit `.env` with your configuration values.
 
 ## Usage
 
-### Process Tickets
-```bash
-python -m src.main
-```
+1. Process resolved tickets to build knowledge base:
+   ```bash
+   python -m src.main
+   ```
 
-### Interactive Mode
-```bash
-python -m src.main --interactive
-```
+2. Enter interactive mode to test responses:
+   ```bash
+   python -m src.main --interactive
+   ```
 
 ## Configuration
 
-The following environment variables can be configured in the `.env` file:
+The following environment variables can be configured in `.env`:
 
 - `ZENDESK_API_URL`: Your Zendesk API URL
 - `ZENDESK_API_KEY`: Your Zendesk API key
-- `SUPPORT_USER_ID`: Default support user ID
-- `OPENROUTER_API_KEY`: Your OpenRouter API key
-- `OPENROUTER_API_HOST`: OpenRouter API host
-- `LLM_MODEL`: Language model to use
-- `EMBEDDINGS_MODEL`: Embeddings model to use
+- `OPENAI_API_KEY`: Your OpenAI API key
+- `HUGGINGFACE_API_KEY`: Your Hugging Face API key
+- `VECTOR_STORE_PATH`: Path to store vector embeddings (default: "data/vector_store")
 
 ## License
 
