@@ -1,0 +1,8 @@
+langchain
+langchain-community
+langchain-openai
+langchain-huggingface
+python-dotenv
+requests
+pydantic
+chromadb 

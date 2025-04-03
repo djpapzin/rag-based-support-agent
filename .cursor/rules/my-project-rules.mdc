@@ -1,0 +1,45 @@
+---
+description: 
+globs: *
+alwaysApply: false
+---
+## MY COMPUTER ##
+
+My OS: Microsoft Windows 10 Pro
+Python version: 3.12.9
+
+## TONE OF VOICE ##
+
+You are a caring instructor who explains all instructions in very simple language as if I were 16 years old. You tell all programming concepts to a child who doesn't understand programming well, doesn't know the basics of working with the command line, and doesn't know the basics of system design.
+
+## CREDENTIALS AND CONSTANTS ##
+
+ZENDESK API URL: https://aidl-001-zd-mock.replit.app/
+ZENDESK API KEY: Bearer 181b570c21584744c93ba42fada53e6f73c3d6e358d385ab147fa6ad7c429b8f
+OPENROUTER API KEY: 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
+OPENROUTER API HOST: https://openrouter.ai/api/v1
+LLM MODEL: google/gemini-2.5-pro-exp-03-25:free
+EMBEDDINGS MODEL: all-MiniLM-L6-v2 from Huggingface
+
+## API SCHEMA OF ZENDESK ##
+
+{"openapi":"3.0.0","info":{"title":"Zendesk API Mock","version":"0.0.1","description":"Mock of the Zendesk API with UI","license":{"name":"MIT","url":"https://spdx.org/licenses/MIT.html"}},"servers":[{"url":"https://aidl-001-zd-mock.replit.app","description":"Production server"},{"url":"http://localhost:8999","description":"Development server"}],"paths":{"/api/v2/imports/tickets/create_many":{"post":{"summary":"Create multiple tickets through import","tags":["Tickets"],"security":[{"BearerAuth":[]}],"requestBody":{"required":true,"content":{"application/json":{"schema":{"type":"object","properties":{"tickets":{"type":"array","items":{"type":"object","properties":{"subject":{"type":"string"},"description":{"type":"string"},"requester_id":{"type":"integer"},"submitter_id":{"type":"integer"},"assignee_id":{"type":"integer"},"status":{"type":"string","enum":["open","pending","on_hold","solved","closed"]},"tags":{"type":"array","items":{"type":"string"}},"custom_fields":{"type":"array","items":{"type":"object"}},"comments":{"type":"array","items":{"type":"object","properties":{"body":{"type":"string"},"author_id":{"type":"integer"},"public":{"type":"boolean"}}}}}}}}}}}},"responses":{"200":{"description":"Job status for ticket creation","content":{"application/json":{"schema":{"$ref":"#/components/schemas/JobStatus"}}}}}}},"/api/v2/tickets/update_many":{"post":{"summary":"Update multiple tickets","tags":["Tickets"],"security":[{"BearerAuth":[]}],"requestBody":{"required":true,"content":{"application/json":{"schema":{"type":"object","properties":{"tickets":{"type":"array","items":{"type":"object","required":["id"],"properties":{"id":{"type":"integer"},"subject":{"type":"string"},"status":{"type":"string","enum":["open","closed"]},"requester_id":{"type":"integer"},"assignee_id":{"type":"integer"},"tags":{"type":"array","items":{"type":"string"}},"custom_fields":{"type":"array","items":{"type":"object"}},"comment":{"type":"object","properties":{"body":{"type":"string"},"author_id":{"type":"integer"},"public":{"type":"boolean"}}}}}}}}}}},"responses":{"200":{"description":"Job status for ticket updates","content":{"application/json":{"schema":{"$ref":"#/components/schemas/JobStatus"}}}},"400":{"description":"Bad request, such as trying to update a closed ticket"}}}},"/api/v2/tickets/show_many":{"get":{"summary":"Get multiple tickets by IDs","tags":["Tickets"],"security":[{"BearerAuth":[]}],"parameters":[{"in":"query","name":"ids","schema":{"type":"string"},"required":true,"description":"Comma-separated list of ticket IDs"}],"responses":{"200":{"description":"List of tickets","content":{"application/json":{"schema":{"type":"object","properties":{"tickets":{"type":"array","items":{"$ref":"#/components/schemas/Ticket"}}}}}}}}}},"/api/v2/tickets/{id}/comments":{"get":{"summary":"Get comments for a specific ticket","tags":["Comments"],"parameters":[{"in":"path","name":"id","schema":{"type":"integer"},"required":true,"description":"Numeric ID of the ticket"}],"responses":{"200":{"description":"List of comments for the ticket","content":{"application/json":{"schema":{"type":"object","properties":{"comments":{"type":"array","items":{"$ref":"#/components/schemas/Comment"}},"count":{"type":"integer","description":"Total number of comments"},"next_page":{"type":"string","nullable":true,"description":"URL for the next page of results"}}}}}},"405":{"description":"Invalid ticket ID"}}}},"/api/v2/search":{"get":{"summary":"Search for tickets based on various criteria","tags":["Search"],"parameters":[{"in":"query","name":"query","schema":{"type":"string"},"required":true,"description":"Search query string. Supports the following formats:\n- status:new/open/pending/hold/solved/closed (filter by ticket status)\n- -status:new/open/pending/hold/solved/closed (exclude tickets with status)\n- tags:tag_name (filter by tag)\n- -tags:tag_name (exclude tickets with tag)\n- custom_field_[id]:value (filter by custom field)\n- -custom_field_[id]:value (exclude by custom field)\nMultiple criteria can be combined with spaces\n"},{"in":"query","name":"sort_by","schema":{"type":"string","enum":["created_at","updated_at"],"default":"created_at"},"description":"Field to sort results by"},{"in":"query","name":"sort_order","schema":{"type":"string","enum":["asc","desc"],"default":"asc"},"description":"Sort order (ascending or descending)"}],"responses":{"200":{"description":"Search results","content":{"application/json":{"schema":{"type":"object","properties":{"count":{"type":"integer","description":"Total number of matching results"},"results":{"type":"array","items":{"$ref":"#/components/schemas/Ticket"}}}}}}},"400":{"description":"Bad request - invalid search query format or invalid status value"}}}}},"components":{"schemas":{"Ticket":{"type":"object","properties":{"id":{"type":"integer","description":"Unique identifier for the ticket"},"created_at":{"type":"string","format":"date-time","description":"Timestamp when the ticket was created"},"updated_at":{"type":"string","format":"date-time","description":"Timestamp when the ticket was last updated"},"subject":{"type":"string","description":"Subject line of the ticket"},"description":{"type":"string","description":"Detailed description of the ticket"},"status":{"type":"string","enum":["open","closed"],"description":"Current status of the ticket"},"requester_id":{"type":"integer","description":"ID of the user who requested the ticket"},"submitter_id":{"type":"integer","description":"ID of the user who submitted the ticket"},"assignee_id":{"type":"integer","description":"ID of the user assigned to the ticket"},"tags":{"type":"array","items":{"type":"string"},"description":"List of tags associated with the ticket"},"custom_fields":{"type":"array","items":{"type":"object","properties":{"id":{"type":"integer"},"value":{"type":"string"}}},"description":"Custom fields associated with the ticket"},"is_public":{"type":"boolean","description":"Whether the ticket is public or not"}}},"Comment":{"type":"object","properties":{"id":{"type":"integer","description":"Unique identifier for the comment"},"created_at":{"type":"string","format":"date-time","description":"Timestamp when the comment was created"},"updated_at":{"type":"string","format":"date-time","description":"Timestamp when the comment was last updated"},"type":{"type":"string","enum":["Comment"],"description":"Type of the entry"},"body":{"type":"string","description":"Content of the comment"},"html_body":{"type":"string","description":"HTML formatted content of the comment"},"public":{"type":"boolean","description":"Whether the comment is public or not"},"author_id":{"type":"integer","description":"ID of the user who authored the comment"}}},"JobStatus":{"type":"object","properties":{"job_id":{"type":"string","description":"Unique identifier for the job"},"status":{"type":"string","enum":["completed","pending"],"description":"Current status of the job"}}}},"securitySchemes":{"BearerAuth":{"type":"http","scheme":"bearer"}}},"tags":[]}
+
+## APP REQUIREMENTS ##
+
+1. Download resolved ticket descriptions from Zendesk API
+2. Build database for RAG. Database must have two columns: question and answer. Extract questions and answers based on a conversation - every ticket has a list of comments.
+3. Answers are made by user with id=111
+4. Build a RAG with Langchain based on answered ticket comments
+5. Download open tickets from Zendesk API
+6. Recommend answers to open tickets based on RAG. Ensure system prompt includes both question and answer.
+7. Send recommended answers as non-public comments to related tickets in Zendesk API
+8. Get updated tickets from Zendesk API and print to the console
+9. Do not fix exact versions of python packages. Let pip resolve it by itself
+10. Use embeddings from langchain-huggingface
+11. Test the solution BY YOURSELF by running the app in console:
+    11.1 The app receives question as input and shows ONLY an answer
+    11.2 RAG built properly: system prompt includes question(s) and answer(s)
+    11.3 RAG built properly: an answer based on included question(s) and answer(s)
+12. Fix all errors
+13. Never change credentials
